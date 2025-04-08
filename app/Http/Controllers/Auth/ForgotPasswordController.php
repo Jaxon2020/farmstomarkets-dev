@@ -35,7 +35,7 @@ class ForgotPasswordController extends Controller
             Log::info('Processing password reset request', ['email' => $email]);
 
             // Construct the redirect URL
-            $redirectTo = 'https://farmstomarkets.com/reset-password';
+            $redirectTo = 'http://localhost:8000/reset-password';
             Log::info('Password reset redirectTo URL', ['redirectTo' => $redirectTo]);
 
             // Log the Supabase URL and anon key being used
