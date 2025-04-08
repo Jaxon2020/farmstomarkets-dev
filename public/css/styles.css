@@ -1,0 +1,113 @@
+/* Apply a global font style */
+body {
+    font-family: Arial, sans-serif; /* Use a basic font */
+    font-weight: bold; /* Make all text bold */
+}
+
+/* Auth form container styles */
+.auth-form-container {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 300px;
+}
+
+.auth-form-container.show {
+    display: block;
+}
+
+.auth-form-container .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.auth-form-container .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form-container .form-group label {
+    margin-bottom: 5px;
+}
+
+.auth-form-container .form-group input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.auth-form-container .btn {
+    padding: 8px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.auth-form-container .btn:hover {
+    background-color: #45a049;
+}
+
+.auth-form-container h3 {
+    margin-top: 0;
+    font-size: 1.2em;
+}
+
+/* Navigation actions styles */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-actions button,
+.nav-actions .profile-btn,
+.nav-actions .sign-out {
+    color: var(--button-text); /* Use the theme's button text color */
+    background-color: var(--button-bg); /* Use the theme's button background color */
+    border: 1px solid var(--button-bg); /* Match the button background */
+    padding: 8px 16px; /* Add consistent padding */
+    border-radius: 4px; /* Add rounded corners */
+    cursor: pointer; /* Show pointer cursor */
+    font-weight: bold; /* Make text bold */
+    font-family: Arial, sans-serif; /* Use consistent font */
+}
+
+.nav-actions button:hover,
+.nav-actions .profile-btn:hover,
+.nav-actions .sign-out:hover {
+    background-color: var(--button-hover-bg); /* Use the theme's hover background color */
+    opacity: 0.9; /* Slight transparency on hover */
+}
+
+.nav-actions form {
+    display: inline;
+}
+
+/* Navigation message styles */
+.nav-message {
+    text-align: center;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.nav-message.success {
+    background-color: #e7f3e7;
+    color: #2e7d32;
+    border: 1px solid #2e7d32;
+}
+
+.nav-message.failure {
+    background-color: #fdeded;
+    color: #d32f2f;
+    border: 1px solid #d32f2f;
+}
