@@ -108,10 +108,20 @@
                 <div class="success">{{ session('status') }}</div>
             @endif
 
-            <form method="POST" action="{{ route('password.update') }}">
+            @if ($errors->has('email'))
+                <div class="error">{{ $errors->first('email') }}</div>
+            @endif
+
+            <form method="POST" action="{{ route('password.reset.update') }}" id="reset-password-form">
                 @csrf
-                <input type="hidden" name="token" value="{{ $token }}">
-                <input type="hidden" name="email" value="{{ $email }}">
+                <input type="hidden" name="token" id="token">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input id="email" type="email" name="email" required>
+                    @error('email')
+                        <div class="error">{{ $message }}</div>
+                    @enderror
+                </div>
                 <div class="form-group">
                     <label for="password">New Password</label>
                     <input id="password" type="password" name="password" required>
@@ -136,5 +146,33 @@
             <p>© 2025 FarmsToMarkets. All rights reserved.</p>
         </div>
     </div>
+
+    <script>
+        // Parse the URL fragment
+        const fragment = window.location.hash.substring(1); // Remove the '#' symbol
+        const params = new URLSearchParams(fragment);
+    
+        const accessToken = params.get('access_token');
+        const email = params.get('email'); // Supabase might include email in the fragment
+        const type = params.get('type');
+    
+        // Check if this is a valid recovery link
+        if (type === 'recovery' && accessToken) {
+            // Set the hidden token field
+            document.getElementById('token').value = accessToken;
+    
+            // If email is provided in the fragment, prefill the email field
+            if (email) {
+                document.getElementById('email').value = email;
+                document.getElementById('email').setAttribute('readonly', true); // Make email field readonly if prefilled
+            }
+    
+            // Clean up the URL by removing the fragment
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else if (window.location.hash) {
+            // Only redirect if there is a fragment and it's invalid
+            window.location.href = "{{ route('password.request') }}?error=invalid_or_expired_reset_link";
+        }
+    </script>
 </body>
 </html>

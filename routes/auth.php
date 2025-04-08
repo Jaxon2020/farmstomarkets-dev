@@ -31,7 +31,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.reset');
 
     Route::post('reset-password', [ResetPasswordController::class, 'store'])
-        ->name('password.update');
+        ->name('password.reset.update'); // Changed name to avoid conflict
 });
 
 Route::middleware('web')->group(function () {
