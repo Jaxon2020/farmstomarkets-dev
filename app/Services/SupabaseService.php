@@ -47,7 +47,7 @@ class SupabaseService extends SupabaseApiBase
     /**
      * Fetch listings for a specific user.
      */
-    public function fetchUserListings(string $userId, ?string $authToken = null): array
+    public function fetchUserListings(string $userId, ?string $authToken = null, ?array $searchCriteria = []): array
     {
         $queryParams = [
             'user_id' => 'eq.' . $userId,
@@ -55,10 +55,24 @@ class SupabaseService extends SupabaseApiBase
             'order' => 'created_at.desc',
         ];
 
+        // Apply search criteria
+        if (!empty($searchCriteria['animal-type'])) {
+            $queryParams['type'] = 'eq.' . $searchCriteria['animal-type'];
+        }
+        if (!empty($searchCriteria['location'])) {
+            $queryParams['location'] = 'eq.' . $searchCriteria['location'];
+        }
+        if (!empty($searchCriteria['min-price'])) {
+            $queryParams['price'] = 'gte.' . $searchCriteria['min-price'];
+        }
+        if (!empty($searchCriteria['max-price'])) {
+            $queryParams['price'] = 'lte.' . $searchCriteria['max-price'];
+        }
+
         return $this->get('listings', $queryParams, $authToken);
     }
 
-    public function fetchLikedListings(string $userId, ?string $authToken = null): array
+    public function fetchLikedListings(string $userId, ?string $authToken = null, ?array $searchCriteria = []): array
     {
         if (empty($userId)) {
             Log::error("Invalid user ID for fetchLikedListings", ['user_id' => $userId]);
@@ -86,11 +100,27 @@ class SupabaseService extends SupabaseApiBase
                 return [];
             }
 
-            // Then fetch the actual listings
+            // Then fetch the actual listings with search criteria
             $listingIdList = implode(',', $listingIds);
             $queryParams = [
                 'id' => 'in.(' . $listingIdList . ')',
+                'select' => 'id,title,price,type,location,image_url,user_id,created_at,contact_email,contact_phone,preferred_contact',
+                'order' => 'created_at.desc',
             ];
+
+            // Apply search criteria
+            if (!empty($searchCriteria['animal-type'])) {
+                $queryParams['type'] = 'eq.' . $searchCriteria['animal-type'];
+            }
+            if (!empty($searchCriteria['location'])) {
+                $queryParams['location'] = 'eq.' . $searchCriteria['location'];
+            }
+            if (!empty($searchCriteria['min-price'])) {
+                $queryParams['price'] = 'gte.' . $searchCriteria['min-price'];
+            }
+            if (!empty($searchCriteria['max-price'])) {
+                $queryParams['price'] = 'lte.' . $searchCriteria['max-price'];
+            }
 
             return $this->get('listings', $queryParams, $authToken);
         } catch (\Exception $e) {
@@ -299,7 +329,7 @@ class SupabaseService extends SupabaseApiBase
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $token,
                 'Content-Type' => $mimeType,
-            ])->withBody(stream_get_contents($fileStream), $mimeType)->post($storageUrl); // Changed from put to post
+            ])->withBody(stream_get_contents($fileStream), $mimeType)->post($storageUrl);
             
             if (!$response->successful()) {
                 $logger->error("Failed to upload image to Supabase", [

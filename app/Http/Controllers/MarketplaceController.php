@@ -166,6 +166,9 @@ class MarketplaceController extends Controller
             return redirect()->back()->withErrors(['listing' => 'User not authenticated.']);
         }
 
+        // Log the user_id for debugging
+        $logger->info('Creating listing with user_id', ['user_id' => $userId]);
+
         // Get the authenticated user's token
         $accessToken = session('supabase_token');
         if (!$accessToken) {

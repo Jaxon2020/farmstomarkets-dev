@@ -46,41 +46,46 @@
 
                 <!-- Listings Sections -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Published Listings -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Published Listings</h2>
-                        <div class="listings-section">
-                            @if(empty($listings))
-                                <p class="text-gray-600">You haven’t published any listings yet.</p>
-                            @else
-                                @include('partials.product_card_section', [
-                                    'listings' => $listings,
-                                    'selectedListing' => $selectedListing,
-                                    'selectedListingHasLiked' => $selectedListingHasLiked,
-                                    'formToken' => $formToken,
-                                    'isAuthenticated' => $isAuthenticated
-                                ])
-                            @endif
-                        </div>
+                <!-- Published Listings -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Published Listings</h2>
+                    <div class="listings-section">
+                        @if(empty($userListings))
+                            <p class="text-gray-600">You haven’t published any listings yet.</p>
+                        @else
+                            @include('partials.product_card_section', [
+                                'listings' => $userListings,
+                                'selectedListing' => $selectedListing,
+                                'selectedListingHasLiked' => $selectedListingHasLiked,
+                                'formToken' => $formToken,
+                                'isAuthenticated' => $isAuthenticated,
+                                'routeName' => 'dashboard' // Added
+                            ])
+                        @endif
                     </div>
+                </div>
 
-                    <!-- Liked Listings -->
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Liked Listings</h2>
-                        <div class="listings-section">
-                            @if(empty($likedListings))
-                                <p class="text-gray-600">You haven’t liked any listings yet.</p>
-                            @else
-                                @include('partials.product_card_section', [
-                                    'listings' => $likedListings,
-                                    'selectedListing' => $selectedListing, // Reuse or adjust if needed
-                                    'selectedListingHasLiked' => $selectedListingHasLiked, // Reuse or adjust
-                                    'formToken' => $formToken,
-                                    'isAuthenticated' => $isAuthenticated
-                                ])
-                            @endif
-                        </div>
+                <!-- Liked Listings -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Liked Listings</h2>
+                    <div class="listings-section">
+                        @if(empty($likedListings))
+                            <p class="text-gray-600">You haven’t liked any listings yet.</p>
+                        @else
+                            @include('partials.product_card_section', [
+                                'listings' => $likedListings,
+                                'selectedListing' => $selectedListing,
+                                'selectedListingHasLiked' => $selectedListingHasLiked,
+                                'formToken' => $formToken,
+                                'isAuthenticated' => $isAuthenticated,
+                                'routeName' => 'dashboard' // Added
+                            ])
+                        @endif
                     </div>
+                </div>
+
+
+
                 </div>
             </section>
         </div>
