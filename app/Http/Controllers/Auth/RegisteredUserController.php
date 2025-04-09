@@ -86,8 +86,8 @@ class RegisteredUserController extends Controller
                 }
             }
 
-            return redirect(route('dashboard', absolute: false))
-                ->with('success', 'Registration successful! Please check your email for confirmation.');
+            return redirect()->route('login')
+                ->with('registration_success', true);
         } catch (\Exception $e) {
             Log::error('Registration error: ' . $e->getMessage());
             // Handle any errors from Supabase

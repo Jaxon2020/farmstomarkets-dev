@@ -157,13 +157,20 @@ class MarketplaceController extends Controller
     public function createListing(Request $request)
     {
         $logger = Log::channel('supabase');
-        $logger->info('Create listing request received', ['request' => $request->all()]);
+        $logger->info('Create listing request received');
 
         // Check if the user is authenticated
         $userId = session('supabase_user_id');
         if (!$userId) {
             $logger->error('User not authenticated');
             return redirect()->back()->withErrors(['listing' => 'User not authenticated.']);
+        }
+
+        // Get the authenticated user's token
+        $accessToken = session('supabase_token');
+        if (!$accessToken) {
+            $logger->error('No access token found in session');
+            return redirect()->back()->withErrors(['listing' => 'No access token found. Please log in again.']);
         }
 
         // Validate the request data
@@ -179,12 +186,17 @@ class MarketplaceController extends Controller
             'image' => 'required|image|mimes:jpeg,png,gif|max:5120', // 5MB
         ]);
 
-        // Upload the image using SupabaseService
+        // Upload the image using SupabaseService with the auth token
         $image = $request->file('image');
-        $imageUrl = $this->supabaseService->uploadImage($image);
+        if (!$image) {
+            $logger->error('No image file provided');
+            return redirect()->back()->withErrors(['image' => 'No image file provided.']);
+        }
+        
+        $imageUrl = $this->supabaseService->uploadImage($image, 'public/', $accessToken); // Pass the access token
         if (!$imageUrl) {
             $logger->error('Failed to upload image for listing');
-            return redirect()->back()->withErrors(['image' => 'Failed to upload image.']);
+            return redirect()->back()->withErrors(['image' => 'Failed to upload image. Please try again.']);
         }
 
         $logger->info('Image uploaded successfully', ['imageUrl' => $imageUrl]);
@@ -196,16 +208,17 @@ class MarketplaceController extends Controller
             'type' => $validated['type'],
             'location' => $validated['location'],
             'description' => $validated['description'],
-            'contact_email' => $validated['contact_email'],
-            'contact_phone' => $validated['contact_phone'],
+            'contact_email' => $validated['contact_email'] ?? null,
+            'contact_phone' => $validated['contact_phone'] ?? null,
             'preferred_contact' => $validated['preferred_contact'],
             'image_url' => $imageUrl,
+            'user_id' => $userId,
         ];
 
-        // Create the listing using SupabaseService
-        $result = $this->supabaseService->createListing($data);
+        // Create the listing using SupabaseService with the auth token
+        $result = $this->supabaseService->createListing($data, $accessToken); // Pass the access token
         if ($result) {
-            $logger->info('Listing created successfully', ['data' => $result]);
+            $logger->info('Listing created successfully');
             return redirect()->route('marketplace')->with('message', 'Listing created successfully!');
         }
 

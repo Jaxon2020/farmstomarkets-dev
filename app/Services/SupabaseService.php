@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class SupabaseService extends SupabaseApiBase
 {
@@ -56,43 +57,70 @@ class SupabaseService extends SupabaseApiBase
 
         return $this->get('listings', $queryParams, $authToken);
     }
+
     public function fetchLikedListings(string $userId, ?string $authToken = null): array
     {
-        $queryParams = [
-            'select' => 'listings(id,title,price,type,location,image_url,user_id,created_at,contact_email,contact_phone,preferred_contact,description)',
-            'user_id' => 'eq.' . $userId,
-            'order' => 'created_at.desc',
-        ];
-
-        // Fetch from the 'likes' table and join with 'listings'
-        $data = $this->get('likes', $queryParams, $authToken);
-
-        // Extract the listings from the response
-        $likedListings = [];
-        foreach ($data as $like) {
-            if (isset($like['listings']) && is_array($like['listings'])) {
-                $likedListings[] = $like['listings'];
-            }
+        if (empty($userId)) {
+            Log::error("Invalid user ID for fetchLikedListings", ['user_id' => $userId]);
+            return [];
         }
 
-        return $likedListings;
+        try {
+            // First get the liked listing IDs
+            $queryParams = [
+                'user_id' => 'eq.' . $userId,
+                'select' => 'listing_id',
+            ];
+
+            $likes = $this->get('likes', $queryParams, $authToken);
+            if (empty($likes)) {
+                return [];
+            }
+
+            // Extract listing IDs
+            $listingIds = array_map(function($like) {
+                return $like['listing_id'];
+            }, $likes);
+
+            if (empty($listingIds)) {
+                return [];
+            }
+
+            // Then fetch the actual listings
+            $listingIdList = implode(',', $listingIds);
+            $queryParams = [
+                'id' => 'in.(' . $listingIdList . ')',
+            ];
+
+            return $this->get('listings', $queryParams, $authToken);
+        } catch (\Exception $e) {
+            Log::error("Error fetching liked listings: " . $e->getMessage());
+            return [];
+        }
     }
+
     /**
      * Check if a user has liked a listing.
      */
     public function hasUserLikedListing(string $userId, string $listingId): bool
     {
-        if (!preg_match('/^[0-9a-fA-F-]{36}$/', $userId) || !preg_match('/^[0-9a-fA-F-]{36}$/', $listingId)) {
-            Log::error("Invalid UUIDs provided", ['user_id' => $userId, 'listing_id' => $listingId]);
+        if (empty($userId) || empty($listingId)) {
+            Log::error("Invalid parameters for hasUserLikedListing", ['user_id' => $userId, 'listing_id' => $listingId]);
             return false;
         }
 
-        $queryParams = [
-            'user_id' => 'eq.' . $userId,
-            'listing_id' => 'eq.' . $listingId,
-        ];
+        try {
+            $queryParams = [
+                'user_id' => 'eq.' . $userId,
+                'listing_id' => 'eq.' . $listingId,
+            ];
 
-        return !empty($this->get('likes', $queryParams));
+            $result = $this->get('likes', $queryParams);
+            return !empty($result);
+        } catch (\Exception $e) {
+            Log::error("Error checking if user liked listing: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -100,12 +128,24 @@ class SupabaseService extends SupabaseApiBase
      */
     public function addLike(string $userId, string $listingId): bool
     {
-        $data = [
-            'user_id' => $userId,
-            'listing_id' => $listingId,
-        ];
+        if (empty($userId) || empty($listingId)) {
+            Log::error("Invalid parameters for addLike", ['user_id' => $userId, 'listing_id' => $listingId]);
+            return false;
+        }
 
-        return !is_null($this->post('likes', $data));
+        try {
+            $data = [
+                'user_id' => $userId,
+                'listing_id' => $listingId,
+                'created_at' => date('Y-m-d H:i:s'),
+            ];
+
+            $result = $this->post('likes', $data);
+            return !is_null($result);
+        } catch (\Exception $e) {
+            Log::error("Error adding like: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -113,12 +153,22 @@ class SupabaseService extends SupabaseApiBase
      */
     public function removeLike(string $userId, string $listingId): bool
     {
-        $queryParams = [
-            'user_id' => 'eq.' . $userId,
-            'listing_id' => 'eq.' . $listingId,
-        ];
+        if (empty($userId) || empty($listingId)) {
+            Log::error("Invalid parameters for removeLike", ['user_id' => $userId, 'listing_id' => $listingId]);
+            return false;
+        }
 
-        return $this->delete('likes', $queryParams);
+        try {
+            $queryParams = [
+                'user_id' => 'eq.' . $userId,
+                'listing_id' => 'eq.' . $listingId,
+            ];
+
+            return $this->delete('likes', $queryParams);
+        } catch (\Exception $e) {
+            Log::error("Error removing like: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -127,41 +177,22 @@ class SupabaseService extends SupabaseApiBase
     public function createListing(array $data, ?string $authToken = null): ?array
     {
         $logger = Log::channel('supabase');
-        $logger->info("Creating listing with data", ['data' => $data]);
-    
-        $userId = session('supabase_user_id');
-        if (!$userId) {
-            $logger->error("Supabase user ID not found in session during createListing.");
+        $logger->info('Creating listing in Supabase', ['data' => $data]);
+
+        try {
+            $result = $this->post('listings', $data, $authToken);
+            if (!empty($result)) {
+                $logger->info('Listing created successfully', ['result' => $result]);
+                return $result;
+            }
+            $logger->warning('No data returned from Supabase after creating listing');
+            return null;
+        } catch (\Exception $e) {
+            $logger->error('Failed to create listing in Supabase: ' . $e->getMessage());
             return null;
         }
-    
-        $data['user_id'] = $userId;
-    
-        // Sanitize the data, but exclude image_url
-        $sanitizedData = array_map(function ($value) {
-            if (is_string($value)) {
-                // Trim whitespace
-                $value = trim($value);
-                // Check if the string is valid UTF-8
-                if (!mb_check_encoding($value, 'UTF-8')) {
-                    // If not UTF-8, assume ISO-8859-1 and convert to UTF-8
-                    $value = mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
-                }
-                // Replace unsafe characters, but allow spaces and some punctuation for readability
-                $value = preg_replace('/[^a-zA-Z0-9\s\.,-]/', '_', $value);
-                return $value;
-            }
-            return $value;
-        }, $data);
-    
-        // Ensure image_url is not sanitized, as it's already a valid URL from Supabase
-        if (isset($data['image_url'])) {
-            $sanitizedData['image_url'] = $data['image_url']; // Use the original image_url without sanitization
-        }
-    
-        $logger->info("Sanitized listing data", ['sanitized_data' => $sanitizedData]);
-        return $this->post('listings', $sanitizedData, $authToken);
     }
+
     /**
      * Delete a listing from Supabase.
      */
@@ -201,13 +232,16 @@ class SupabaseService extends SupabaseApiBase
         return $this->get('listings', $queryParams, $authToken);
     }
 
+    public function __construct()
+    {
+        parent::__construct(); // Call parent constructor to set $baseUrl, $anonKey, etc.
+        $this->url = env('SUPABASE_URL'); // Set the root URL for Storage API
+    }
+
     /**
-     * Upload an image to Supabase Storage (unchanged).
+     * Upload an image to Supabase Storage using direct HTTP request.
      */
-    /**
-     * Upload an image to Supabase Storage.
-     */
-    public function uploadImage($image, $folder = 'public/'): ?string
+    public function uploadImage($image, $folder = 'public/', ?string $authToken = null): ?string
     {
         $logger = Log::channel('supabase');
         $fileStream = null;
@@ -222,120 +256,74 @@ class SupabaseService extends SupabaseApiBase
             // Validate file type and size
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
             $mimeType = $image->getMimeType();
-            $logger->debug("Checking image MIME type", [
-                'mime_type' => $mimeType,
-                'allowed_types' => $allowedTypes,
-            ]);
+            
             if (!in_array($mimeType, $allowedTypes)) {
-                $logger->error("Invalid image type: " . $mimeType, [
-                    'mime_type' => $mimeType,
-                    'allowed_types' => $allowedTypes,
-                ]);
                 throw new \Exception("Only JPEG, PNG, and GIF images are allowed.");
             }
 
+            // Check file size (5MB limit)
             $fileSize = $image->getSize();
-            $logger->debug("Checking image size", [
-                'file_size' => $fileSize,
-                'max_size' => 5 * 1024 * 1024,
-            ]);
             if ($fileSize > 5 * 1024 * 1024) {
-                $logger->error("Image size exceeds 5 MB: " . $fileSize, [
-                    'file_size' => $fileSize,
-                    'max_size' => 5 * 1024 * 1024,
-                ]);
                 throw new \Exception("Image size exceeds 5 MB.");
             }
 
-            // Sanitize the file name
+            // Sanitize the file name to ensure UTF-8 compatibility
             $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $image->getClientOriginalExtension();
+            
+            // Ensure filename is valid UTF-8
+            if (!mb_check_encoding($originalName, 'UTF-8')) {
+                $originalName = mb_convert_encoding($originalName, 'UTF-8', 'ISO-8859-1');
+            }
+            
             $sanitizedFileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $originalName) . '.' . $extension;
-            $logger->debug("Sanitized file name", [
-                'original_name' => $originalName,
-                'extension' => $extension,
-                'sanitized_file_name' => $sanitizedFileName,
-            ]);
-
-            // Add a timestamp to avoid conflicts
             $fileName = time() . '_' . $sanitizedFileName;
             $filePath = $folder . $fileName;
-            $logger->debug("Prepared file path", [
-                'file_name' => $fileName,
-                'folder' => $folder,
-                'file_path' => $filePath,
-            ]);
-
+            
             // Open the file as a stream to handle binary data correctly
             $realPath = $image->getRealPath();
-            $logger->debug("Opening file stream", [
-                'real_path' => $realPath,
-            ]);
             $fileStream = fopen($realPath, 'rb');
             if ($fileStream === false) {
-                $logger->error("Failed to open file stream for: " . $realPath, [
-                    'real_path' => $realPath,
-                ]);
+                $logger->error("Failed to open file stream for: " . $realPath);
                 throw new \Exception("Failed to open file stream.");
             }
 
-            // Upload the file to Supabase using the laravel-supabase-flysystem driver
-            $logger->info("Uploading file to Supabase", [
-                'file_path' => $filePath,
-            ]);
-            $result = Storage::disk('supabase')->put($filePath, $fileStream, 'public');
-            $logger->debug("Upload result", [
-                'result' => $result,
-            ]);
-
-            if (!$result) {
-                $logger->error("Failed to upload image to Supabase: " . $fileName, [
-                    'file_name' => $fileName,
-                    'file_path' => $filePath,
+            // Prepare the URL for the Supabase Storage API
+            $bucketName = 'listings-images';
+            $storageUrl = rtrim($this->url, '/') . '/storage/v1/object/' . $bucketName . '/' . $filePath;
+            
+            // Use the authenticated user's token if provided, otherwise fall back to anonKey
+            $token = $authToken ?? $this->anonKey;
+            
+            // Make the HTTP request to upload the file using a stream
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => $mimeType,
+            ])->withBody(stream_get_contents($fileStream), $mimeType)->post($storageUrl); // Changed from put to post
+            
+            if (!$response->successful()) {
+                $logger->error("Failed to upload image to Supabase", [
+                    'status' => $response->status(),
+                    'response' => $response->body(),
                 ]);
-                throw new \Exception("Failed to upload image to Supabase.");
+                throw new \Exception("Failed to upload image to Supabase: " . $response->body());
             }
-
-            // Get the public URL
-            $publicUrl = Storage::disk('supabase')->url($filePath);
-            $logger->debug("Retrieved public URL", [
-                'public_url' => $publicUrl,
-                'file_path' => $filePath,
-            ]);
-
-            // If the URL returned by the driver isn't a full URL, construct it manually
-            if (!filter_var($publicUrl, FILTER_VALIDATE_URL)) {
-                $supabaseUrl = config('filesystems.disks.supabase.url');
-                $bucketName = config('filesystems.disks.supabase.bucket');
-                $constructedUrl = rtrim($supabaseUrl, '/') . '/storage/v1/object/public/' . $bucketName . '/' . $filePath;
-                $logger->debug("Constructed public URL manually", [
-                    'original_public_url' => $publicUrl,
-                    'supabase_url' => $supabaseUrl,
-                    'bucket_name' => $bucketName,
-                    'constructed_url' => $constructedUrl,
-                ]);
-                $publicUrl = $constructedUrl;
-            }
-
-            $logger->info("Image uploaded successfully. Public URL: {$publicUrl}", [
-                'public_url' => $publicUrl,
-            ]);
+            
+            // Construct the public URL
+            $publicUrl = rtrim($this->url, '/') . '/storage/v1/object/public/' . $bucketName . '/' . $filePath;
+            
+            $logger->info("Image uploaded successfully. Public URL: {$publicUrl}");
             return $publicUrl;
-
+            
         } catch (\Exception $e) {
-            $logger->error("Error uploading image: " . $e->getMessage(), [
+            $logger->error("Exception during image upload: " . $e->getMessage(), [
                 'exception' => $e->getMessage(),
-                'stack_trace' => $e->getTraceAsString(),
             ]);
             return null;
         } finally {
             if (is_resource($fileStream)) {
                 fclose($fileStream);
                 $logger->debug("File stream closed");
-            } else {
-                $logger->warning("File stream was not a valid resource, skipping fclose", [
-                    'file_stream' => $fileStream,
-                ]);
             }
         }
     }
