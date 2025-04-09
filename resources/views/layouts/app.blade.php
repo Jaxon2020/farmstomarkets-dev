@@ -14,8 +14,11 @@
     <link rel="stylesheet" href="{{ asset('css/responsive.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/modal.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/slideshow.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}?v={{ time() }}">
+
     <!-- Page-Specific Styles -->
     @yield('styles')
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&family=Georgia&display=swap" rel="stylesheet">
 </head>
@@ -23,7 +26,7 @@
     @if (session('signup_success'))
         <div id="signupModal" class="modal">
             <div class="modal-content">
-                <span class="close-btn" id="closeSignupModal">&times;</span>
+                <span class="close-btn" id="closeSignupModal">×</span>
                 <p>Sign up successful! A confirmation email has been sent to your email address.</p>
             </div>
         </div>
@@ -64,4 +67,3 @@
     @endif
 </body>
 </html>
-

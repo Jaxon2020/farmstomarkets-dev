@@ -7,6 +7,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use PHPSupabase\Service;
@@ -63,35 +64,32 @@ class RegisteredUserController extends Controller
 
             // Get the response data from Supabase
             $userData = $auth->data();
-
-            // Since Supabase handles the user creation, we won't use the local User model
-            // Optionally, you can still create a local User record if needed for Laravel's auth system
-            /*
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password), // Store hashed password locally
-            ]);
-            */
-
-            // Fire the Registered event (if you still want to use Laravel events)
-            // Note: You might need to adjust this based on whether you keep a local User model
-            // event(new Registered($user));
-
-            // Log the user in using Supabase's session (or Laravel's auth if synced locally)
-            // For Supabase-only auth, you’d typically use the access token
-            $accessToken = $userData->access_token;
-            // You could store this token in the session or use it with Laravel’s auth system
-            // For simplicity, here we assume immediate login isn’t needed unless synced locally
-
-            // If you want to use Laravel’s Auth system, you’d need to sync the user locally and log in:
-            /*
-            Auth::login($user);
-            */
+            
+            // Log the structure to debug
+            Log::info('Supabase registration response', ['userData' => $userData]);
+            
+            // Check if access_token exists before trying to access it
+            $accessToken = null;
+            if (isset($userData->access_token)) {
+                $accessToken = $userData->access_token;
+            }
+            
+            // Store user data in session if needed
+            if (isset($userData->user) && isset($userData->user->id)) {
+                session([
+                    'supabase_user_id' => $userData->user->id,
+                    'supabase_user' => $userData->user
+                ]);
+                
+                if ($accessToken) {
+                    session(['supabase_access_token' => $accessToken]);
+                }
+            }
 
             return redirect(route('dashboard', absolute: false))
                 ->with('success', 'Registration successful! Please check your email for confirmation.');
         } catch (\Exception $e) {
+            Log::error('Registration error: ' . $e->getMessage());
             // Handle any errors from Supabase
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'email' => [$e->getMessage()],
