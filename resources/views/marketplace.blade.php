@@ -4,6 +4,11 @@
     <!-- Include CSS references from the home page -->
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/marketplace.css') }}">
+
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/marketplace.js') }}" defer></script>
 @endsection
 
 @section('content')
@@ -54,7 +59,8 @@
                 <div class="create-listing-sidebar">
                     @include('partials.create_listing_form', [
                         'formToken' => $formToken,
-                        'message' => $message ?? ''
+                        'message' => $message ?? '',
+                        'userProfile' => $userProfile ?? null
                     ])
                 </div>
             @else

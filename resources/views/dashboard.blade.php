@@ -8,14 +8,7 @@
 @section('content')
     <div class="min-h-screen bg-gray-50 py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Slideshow Section -->
-            <section class="slideshow mb-12">
-                @if(!empty($featuredListings))
-                    @include('partials.slideshow', ['featuredListings' => $featuredListings])
-                @else
-                    <p class="text-center text-gray-600">No featured listings available at the moment.</p>
-                @endif
-            </section>
+
 
             <!-- Dashboard Section -->
             <section class="marketplace">

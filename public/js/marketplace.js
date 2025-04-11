@@ -74,3 +74,64 @@ function openModal(listing) {
     modal.setAttribute('aria-hidden', 'false');
     closeBtn.setAttribute('aria-label', 'Close modal');
 }
+
+// Auto-fill contact information from user profile
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Marketplace JS loaded');
+
+    // Email checkbox handler
+    const useAccountEmailCheckbox = document.getElementById('use-account-email');
+    const contactEmail = document.getElementById('contact-email');
+
+    if (useAccountEmailCheckbox && contactEmail) {
+        console.log('Email data:', contactEmail.dataset.userEmail);
+
+        // Apply autofill on page load if checkbox is checked
+        if (useAccountEmailCheckbox.checked) {
+            contactEmail.value = contactEmail.dataset.userEmail || '';
+            contactEmail.readOnly = true;
+        }
+
+        useAccountEmailCheckbox.addEventListener('change', function() {
+            console.log('Email checkbox changed, checked:', this.checked);
+            if (this.checked) {
+                contactEmail.dataset.originalValue = contactEmail.value;
+                contactEmail.value = contactEmail.dataset.userEmail || '';
+                contactEmail.readOnly = true;
+            } else {
+                contactEmail.value = contactEmail.dataset.originalValue || '';
+                contactEmail.readOnly = false;
+            }
+        });
+    } else {
+        console.warn('Email checkbox or input not found');
+    }
+
+    // Phone checkbox handler
+    const useAccountPhoneCheckbox = document.getElementById('use-account-phone');
+    const contactPhone = document.getElementById('contact-phone');
+
+    if (useAccountPhoneCheckbox && contactPhone) {
+        console.log('Phone data:', contactPhone.dataset.userPhone);
+
+        // Apply autofill on page load if checkbox is checked
+        if (useAccountPhoneCheckbox.checked) {
+            contactPhone.value = contactPhone.dataset.userPhone || '';
+            contactPhone.readOnly = true;
+        }
+
+        useAccountPhoneCheckbox.addEventListener('change', function() {
+            console.log('Phone checkbox changed, checked:', this.checked);
+            if (this.checked) {
+                contactPhone.dataset.originalValue = contactPhone.value;
+                contactPhone.value = contactPhone.dataset.userPhone || '';
+                contactPhone.readOnly = true;
+            } else {
+                contactPhone.value = contactPhone.dataset.originalValue || '';
+                contactPhone.readOnly = false;
+            }
+        });
+    } else {
+        console.warn('Phone checkbox or input not found');
+    }
+});

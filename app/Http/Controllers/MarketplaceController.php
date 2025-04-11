@@ -22,8 +22,10 @@ class MarketplaceController extends Controller
         $accessToken = session('supabase_token'); // Use Supabase access token from session
         $isAuthenticated = !empty($userId) && preg_match('/^[0-9a-fA-F-]{36}$/', $userId) && !empty($accessToken);
 
-        // Log access for debugging
+        // Get user profile information if authenticated
+        $userProfile = null;
         if ($isAuthenticated) {
+            $userProfile = $this->supabaseService->getUserProfile($userId);
             Log::info("Marketplace accessed by authenticated user: {$userId}");
         } else {
             Log::info("Marketplace accessed by guest");
@@ -151,6 +153,7 @@ class MarketplaceController extends Controller
             'message' => Session::get('message'),
             'showAuthForm' => $showAuthForm,
             'isAuthenticated' => $isAuthenticated,
+            'userProfile' => $userProfile, // Add user profile to the view
         ]);
     }
 

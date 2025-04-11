@@ -32,11 +32,25 @@
             </div>
             <div class="form-group">
                 <label for="contact-email">Contact Email</label>
-                <input type="email" id="contact-email" name="contact_email" placeholder="e.g. seller@example.com" value="{{ old('contact_email') }}">
+                <input type="email" id="contact-email" name="contact_email" 
+                       placeholder="e.g. seller@example.com" 
+                       value="{{ old('contact_email') }}"
+                       data-user-email="{{ $userProfile['email'] ?? '' }}">
+                <div class="checkbox-below">
+                    <input type="checkbox" id="use-account-email" name="use_account_email">
+                    <label for="use-account-email">Use my account email</label>
+                </div>
             </div>
             <div class="form-group">
                 <label for="contact-phone">Contact Phone</label>
-                <input type="tel" id="contact-phone" name="contact_phone" placeholder="e.g. (555) 123-4567" value="{{ old('contact_phone') }}">
+                <input type="tel" id="contact-phone" name="contact_phone" 
+                       placeholder="e.g. (555) 123-4567" 
+                       value="{{ old('contact_phone') }}"
+                       data-user-phone="{{ $userProfile['phone'] ?? '' }}">
+                <div class="checkbox-below">
+                    <input type="checkbox" id="use-account-phone" name="use_account_phone">
+                    <label for="use-account-phone">Use my account phone</label>
+                </div>
             </div>
             <div class="form-group">
                 <label for="listing-image">Upload Image</label>

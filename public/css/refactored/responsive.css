@@ -1,0 +1,71 @@
+/* responsive.css - Media queries for responsive design */
+
+/* Large screens (desktops) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* Medium screens (tablets) */
+@media (max-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+    
+    .feature-card {
+        width: 45%;
+    }
+    
+    .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+/* Small screens (tablets and large phones) */
+@media (max-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+    
+    .navbar {
+        padding: 10px 20px;
+    }
+    
+    button, .btn {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+    
+    .profile-btn, .sign-out {
+        padding: 6px 12px;
+    }
+    
+    .card {
+        margin: 10px;
+    }
+    
+    .feature-card {
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .features {
+        flex-wrap: wrap;
+    }
+    
+    .marketplace-integrated {
+        flex-direction: column;
+    }
+    
+    .marketplace-sidebar,
+    .listings-container {
+        max-width: 100%;
+    }
+    
+    /* Show mobile menu button */
+    .menu-toggle {
+        display: block;
+    }
+    
+    /* Hide nav links by default

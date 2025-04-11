@@ -373,4 +373,29 @@ class SupabaseService extends SupabaseApiBase
     {
         return $this->url;
     }
+
+    /**
+     * Get user profile information
+     */
+    public function getUserProfile($userId)
+    {
+        try {
+            $response = Http::withHeaders([
+                'apikey' => $this->anonKey,
+                'Authorization' => 'Bearer ' . session('supabase_token')
+            ])->get($this->url . '/rest/v1/profiles', [
+                'select' => 'email,phone',
+                'user_id' => 'eq.' . $userId
+            ]);
+
+            if ($response->successful() && !empty($response->json())) {
+                return $response->json()[0];
+            }
+            
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch user profile: ' . $e->getMessage());
+            return null;
+        }
+    }
 }
