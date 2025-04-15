@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/agreement.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/combined.css') }}">
 @endsection
 
 @section('content')
-    <section class="agreement-content">
-        <div class="agreement-container">
+    <section class="content-section agreement-content">
+        <div class="content-container">
             <h1>User Agreement</h1>
             <p>Welcome to FarmstoMarkets! By using our platform, you agree to the following terms and conditions:</p>
 

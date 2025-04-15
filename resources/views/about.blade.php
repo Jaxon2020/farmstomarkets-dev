@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/about.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/combined.css') }}">
 @endsection
 
 @section('content')
     <!-- About Us Section -->
-    <section class="about-content">
-        <div class="about-container">
+    <section class="content-section">
+        <div class="content-container">
             <h2>About FarmMarket</h2>
             <p>FarmMarket is your trusted platform for buying and selling farm animals. We connect farmers, breeders, and buyers in a secure and transparent marketplace environment.</p>
 

@@ -218,12 +218,19 @@ body[data-theme="ocean"] .sign-out {
 body {
     color: var(--text-color);
     background-color: var(--background-color);
-    font-family: Arial, sans-serif; /* Ensure Arial is used globally */
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
 }
 
-/* Ensure headings use the heading color */
+/* Ensure headings use the heading color and consistent font */
 h1, h2, h3, h4, h5, h6 {
     color: var(--heading-color);
+    font-family: 'Arial', sans-serif;
+}
+
+/* Ensure all text elements use the same font */
+p, a, button, .btn, input, textarea, select, label, .card p, .card h4 {
+    font-family: 'Arial', sans-serif;
 }
 
 /* Ensure buttons use the button styles */

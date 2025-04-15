@@ -4,7 +4,6 @@
     <!-- Include CSS references from the home page -->
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/marketplace.css') }}">
-
 @endsection
 
 @section('scripts')
@@ -41,19 +40,8 @@
             </div>
         @endif
 
-        <!-- Flex Container for Listings and Create Form -->
+        <!-- Flex Container for Create Form and Listings -->
         <div class="marketplace-container">
-            <!-- Product Card Section -->
-            <div class="listings-section">
-                @include('partials.product_card_section', [
-                    'listings' => $listings,
-                    'selectedListing' => $selectedListing,
-                    'selectedListingHasLiked' => $selectedListingHasLiked,
-                    'formToken' => $formToken,
-                    'isAuthenticated' => $isAuthenticated
-                ])
-            </div>
-
             <!-- Create Listing Form -->
             @if ($isAuthenticated)
                 <div class="create-listing-sidebar">
@@ -68,6 +56,17 @@
                     <p>Please <a href="{{ route('login') }}">log in</a> to create a listing.</p>
                 </div>
             @endif
+
+            <!-- Product Card Section -->
+            <div class="listings-section">
+                @include('partials.product_card_section', [
+                    'listings' => $listings,
+                    'selectedListing' => $selectedListing,
+                    'selectedListingHasLiked' => $selectedListingHasLiked,
+                    'formToken' => $formToken,
+                    'isAuthenticated' => $isAuthenticated
+                ])
+            </div>
         </div>
     </section>
 @endsection

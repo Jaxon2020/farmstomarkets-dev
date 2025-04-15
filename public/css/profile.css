@@ -1,4 +1,20 @@
 /* public/css/profile.css */
+body {
+    font-family: 'Arial Sans', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Arial Sans', sans-serif;
+}
+
+p, span, div, a, button, input {
+    font-family: 'Arial Sans', sans-serif;
+}
+
+.text-2xl, .text-lg, .text-sm {
+    font-family: 'Arial Sans', sans-serif;
+}
+
 .min-h-screen {
     min-height: 100vh;
 }
