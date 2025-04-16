@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/combined.css') }}">
+@endsection
+
 @section('content')
     <!-- Include Slideshow -->
     @include('partials.slideshow', ['featuredListings' => $featuredListings])

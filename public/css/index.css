@@ -6,7 +6,7 @@
 
 /* General Styles (Applied to All Themes) */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     margin: 0;
     padding: 0;
     color: var(--text-color);
@@ -15,13 +15,13 @@ body {
 
 /* Apply consistent font family */
 body, h1, h2, h3, h4, h5, h6, p {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     font-weight: bold;
 }
 
 /* Ensure h1 elements use the same font as <p> elements */
 h1 {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
 }
 
 /* Navbar Styles */
@@ -35,7 +35,7 @@ h1 {
 }
 
 .logo a {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     font-size: 24px;
     font-weight: bold;
     color: var(--heading-color);
@@ -53,7 +53,7 @@ h1 {
 .nav-links li a {
     text-decoration: none;
     color: var(--text-color);
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     font-size: 16px;
     transition: color 0.3s;
 }
@@ -76,7 +76,7 @@ h1 {
     border-radius: 5px;
     background-color: var(--section-bg);
     color: var(--text-color);
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -91,7 +91,7 @@ h1 {
 }
 
 .theme-switcher label {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     margin-right: 10px;
     color: var(--text-color);
 }
@@ -102,7 +102,7 @@ h1 {
     border-radius: 5px;
     background: var(--input-bg);
     color: var(--text-color);
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     cursor: pointer;
 }
 
@@ -148,7 +148,7 @@ h1 {
 .animal-info h3 {
     margin: 0;
     font-size: 20px;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     color: var(--heading-color);
 }
 
@@ -180,14 +180,14 @@ h1 {
 }
 
 .tagline h1 {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     font-size: 36px;
     color: var(--heading-color);
     margin-bottom: 10px;
 }
 
 .tagline p {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     font-size: 18px;
     color: var(--text-color);
     margin-bottom: 20px;
@@ -203,7 +203,7 @@ h1 {
     border-radius: 5px;
     text-decoration: none;
     display: inline-block;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     transition: background-color 0.3s;
 }
 
@@ -233,13 +233,13 @@ h1 {
 
 .feature-card h3 {
     margin-top: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     color: var(--heading-color);
 }
 
 .feature-card p {
     color: var(--text-color);
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
 }
 
 /* Modal Styles (for Signup Success) */
@@ -299,14 +299,14 @@ footer div {
 }
 
 footer h4 {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     font-size: 20px;
     color: var(--heading-color);
     margin-bottom: 10px;
 }
 
 footer p, footer a {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial Sans', sans-serif;
     font-size: 14px;
     color: var(--text-color);
     text-decoration: none;

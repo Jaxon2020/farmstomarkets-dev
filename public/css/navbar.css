@@ -1,6 +1,6 @@
 /* navbar.css */
 
-/* Navbar Styles */
+/* Navbar Base Styles */
 .navbar {
     background-color: #333;
     color: white;
@@ -8,6 +8,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.brand-logo {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.5rem;
 }
 
 .navbar-menu {
@@ -19,65 +33,148 @@
 }
 
 .navbar-menu li {
-    display: inline;
+    display: inline-block;
 }
 
-.navbar-menu a {
+.navbar-menu a,
+.navbar-menu .logout-button {
     color: white;
     text-decoration: none;
     font-weight: bold;
-    padding: 5px 10px;
+    padding: 8px 12px;
     border-radius: 5px;
     transition: background-color 0.3s;
+    display: block;
 }
 
-.navbar-menu a:hover {
+.navbar-menu a:hover,
+.navbar-menu .logout-button:hover {
     background-color: #555;
 }
 
-.nav-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.logout-form {
+    display: inline;
 }
 
-.profile, .sign-out {
+.logout-button {
     background: none;
-    border: var(--input-border);
-    padding: 5px 10px;
+    border: none;
     cursor: pointer;
-    border-radius: 5px;
-    background-color: var(--section-bg);
-    color: var(--text-color);
-    font-family: 'Georgia', serif;
-    transition: background-color 0.3s, color 0.3s;
+    font-size: 1rem;
 }
 
-.profile:active, .sign-out:active {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-}
-
-/* Theme Switcher */
-.theme-switcher {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.theme-switcher label {
-    color: white;
-    font-weight: bold;
-}
-
-.theme-switcher select {
+/* Hamburger Menu */
+.navbar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
     padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
 }
 
-.nav-message {
-    text-align: center;
-    color: var(--text-color);
-    margin: 10px 0;
+.hamburger-icon,
+.hamburger-icon::before,
+.hamburger-icon::after {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.hamburger-icon {
+    position: relative;
+}
+
+.hamburger-icon::before,
+.hamburger-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+}
+
+.hamburger-icon::before {
+    top: -8px;
+}
+
+.hamburger-icon::after {
+    bottom: -8px;
+}
+
+.navbar-toggle.active .hamburger-icon {
+    background: transparent;
+}
+
+.navbar-toggle.active .hamburger-icon::before {
+    transform: rotate(45deg);
+    top: 0;
+}
+
+.navbar-toggle.active .hamburger-icon::after {
+    transform: rotate(-45deg);
+    bottom: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar-toggle {
+        display: block;
+    }
+
+    .navbar-menu {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .navbar-menu.active {
+        display: flex;
+    }
+
+    .navbar-menu li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .navbar-menu a,
+    .navbar-menu .logout-button {
+        padding: 15px;
+        border-top: 1px solid #444;
+    }
+
+    .logout-form {
+        width: 100%;
+    }
+}
+
+/* Ensure compatibility with smaller devices */
+@media (max-width: 480px) {
+    .brand-logo {
+        font-size: 1.2rem;
+    }
+
+    .navbar-toggle {
+        padding: 3px;
+    }
+
+    .hamburger-icon,
+    .hamburger-icon::before,
+    .hamburger-icon::after {
+        width: 20px;
+        height: 2px;
+    }
+
+    .hamburger-icon::before {
+        top: -6px;
+    }
+
+    .hamburger-icon::after {
+        bottom: -6px;
+    }
 }

@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <div class="header">
-            <img src="https://hemsunqtfchweiefnxmd.supabase.co/storage/v1/object/public/listings-images/public/farmstomarkets_logo.jpg" alt="FarmsToMarkets Logo">
+            <img src="{{ asset('images/farmstomarkets_logo.jpg') }}" alt="FarmsToMarkets Logo">
         </div>
         <div class="content">
             <h2>Register</h2>

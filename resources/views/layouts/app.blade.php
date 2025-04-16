@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $pageTitle ?? 'FarmMarket' }}</title>
+    <title>{{ $pageTitle ?? 'FarmstoMarkets' }}</title>
 
     <!-- Global Styles -->
     <link rel="stylesheet" href="{{ asset('css/reset.css') }}?v={{ time() }}">
@@ -62,6 +62,7 @@
     <footer>
         @include('partials.footer')
     </footer>
+    <script src="{{ asset('js/navbar.js') }}?v={{ time() }}"></script>
     @if (View::hasSection('slideshow'))
         <script src="{{ asset('js/slideshow.js') }}"></script>
     @endif

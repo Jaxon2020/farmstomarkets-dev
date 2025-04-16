@@ -36,7 +36,8 @@
 .animal-info h3 {
     margin: 0;
     font-size: 20px;
-    font-family: 'Amatic SC', cursive;
+    font-family: 'Arial Sans', sans-serif;
+
     color: var(--heading-color);
 }
 
@@ -68,14 +69,16 @@
 }
 
 .tagline h1 {
-    font-family: 'Amatic SC', cursive;
+    font-family: 'Arial Sans', sans-serif;
+
     font-size: 36px;
     color: var(--heading-color);
     margin-bottom: 10px;
 }
 
 .tagline p {
-    font-family: 'Georgia', serif;
+    font-family: 'Arial Sans', sans-serif;
+
     font-size: 18px;
     color: var(--text-color);
     margin-bottom: 20px;
@@ -91,7 +94,8 @@
     border-radius: 5px;
     text-decoration: none;
     display: inline-block;
-    font-family: 'Georgia', serif;
+    font-family: 'Arial Sans', sans-serif;
+
     transition: background-color 0.3s;
 }
 
@@ -121,11 +125,11 @@
 
 .feature-card h3 {
     margin-top: 0;
-    font-family: 'Amatic SC', cursive;
+    font-family: 'Arial Sans', sans-serif;
     color: var(--heading-color);
 }
 
 .feature-card p {
     color: var(--text-color);
-    font-family: 'Georgia', serif;
+    font-family: 'Arial Sans', sans-serif;
 }
