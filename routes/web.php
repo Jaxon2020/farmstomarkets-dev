@@ -18,7 +18,9 @@ Route::get('/about', [\App\Http\Controllers\AboutController::class, 'index'])->n
 Route::get('/agreement', [\App\Http\Controllers\AgreementController::class, 'index'])->name('agreement');
 
 // Dashboard route
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::match(['get', 'post'], '/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('dashboard');
 
 // Theme switching route
 Route::post('/theme/switch', [ThemeController::class, 'switchTheme'])->name('theme.switch');

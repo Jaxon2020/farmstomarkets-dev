@@ -18,7 +18,7 @@
 
                 <!-- Add Like Button -->
                 @if ($isAuthenticated && session('supabase_user_id') !== ($selectedListing['user_id'] ?? null))
-                    <form method="POST" action="{{ route('marketplace') }}" style="display: inline;">
+                    <form method="POST" action="{{ route($routeName ?? 'marketplace') }}" style="display: inline;">
                         @csrf
                         <input type="hidden" name="like_listing" value="1">
                         <input type="hidden" name="listing_id" value="{{ $selectedListing['id'] }}">
@@ -64,7 +64,7 @@
                                 </form>
                             @elseif ($isAuthenticated && isset($listing['user_id']))
                                 <!-- Like/Unlike Button -->
-                                <form method="POST" action="{{ route('marketplace') }}" style="display: inline;">
+                                <form method="POST" action="{{ route($routeName ?? 'marketplace') }}" style="display: inline;">
                                     @csrf
                                     <input type="hidden" name="like_listing" value="1">
                                     <input type="hidden" name="listing_id" value="{{ $listing['id'] }}">
